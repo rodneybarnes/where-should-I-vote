@@ -39,4 +39,30 @@ $(document).ready(function() {
       unsetBoxShadow()
   })
 
+  let map,
+  infobox,
+  userLocationLayer,
+  userPushpinsLayer,
+  schoolsLayer
+
+  $("#searchBtn").click(getMap)
+
+  function loadMapScenario(){
+    getMap()
+  }
+
+  /**
+   * Initializes the map.
+   */
+  function getMap() {
+    // Center the map on Hamilton, Ontario with an appropriate zoom level so the user
+    // can see the entire city.
+    console.log("loading map")
+    map = new Microsoft.Maps.Map(document.getElementById('ps-map'), {
+      center: new Microsoft.Maps.Location(43.2557, -79.8711),
+      zoom: 12
+    })
+
+  }
+
 })
