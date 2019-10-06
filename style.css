@@ -1,0 +1,29 @@
+@import "//fonts.googleapis.com/css?family=Roboto+Slab:300,400&display=swap";
+
+h1 {
+    font-family: 'Roboto Slab', serif;
+}
+
+input:focus {
+    outline: none;
+}
+
+#searchbar {
+    background-color: #fff;
+    /* height: 45px; */
+    border: 0.5px solid #C2C2C2;
+    box-sizing: border-box;
+    border-radius: 20px;
+    padding-left: 10px;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+/* #searchbar:hover {
+    box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 0 3px rgba(0,0,0,0.23);
+} */
+
+#searchbar input {
+    width: 90%;
+    height: 90%;
+    border: none;
+}

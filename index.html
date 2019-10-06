@@ -2,18 +2,49 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Polling Stations</title>
+        <title>Where Should I Vote?</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+         <!-- Material Design for Bootstrap fonts and icons -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+        <!-- Material Design for Bootstrap CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+        <link href="style.css" rel="stylesheet">
     </head>
-    <body>
-        <div>Results:</div>
+    <body class="bg-white">
+        <div class="container-fluid bg-success m-0" style="height: 10px;"></div>
+        <div class="container">
+            <div class="mt-5 col">
+                <div class="row justify-content-center">
+                    <h1 class="text-center font-weight-light">Where Should I Vote?</h1>
+                </div>
+                <div class="mt-3 form-group row justify-content-center">
+                    <div class="col-6 pl-2" id="searchbar">
+                        <form class="m-0 p-2">
+                            <div class="row pl-3">
+                                <i class="material-icons pr-2">search</i>
+                                <label for="searchbar" aria-label="Enter your address or postal code here"></label>
+                                <input type="text" placeholder="Enter your address or postal code here">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-4">
+                        <div class="row justify-content-around">
+                            <button type="button" class="btn active">Use current location</button>
+                            <button type="button" class="btn active">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="results"></div>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
         <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
         <script src="polling.js" async defer></script>
+        <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AkpqQWmpsJQMgLXtKOlvLRJa1VQKsvVtQJCbVDHwHfV1Vl05N4wviEjYoKZllQ8g&callback=loadMapScenario' async defer></script>
     </body>
 </html>
