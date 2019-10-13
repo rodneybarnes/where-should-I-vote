@@ -2,8 +2,25 @@
 include 'simple_html_dom.php';
 
 if($_REQUEST['action'] == 'getPollingInfo'){
+    // TODO: Validate and sanitize this input.
     $postalCode = $_REQUEST['postalCode'];
     $province = $_REQUEST['province'];
+    
+    $pollingInfo = getPollingInfo();
+    $pollingInfo[] = array('candidates' => getCandidates($postalCode, $province));
+
+    echo json_encode($pollingInfo);
+}
+
+/**
+ * Scrapes polling station info from elections.ca using a postal code and province as query parameters.
+ * 
+ * @param string $postalCode The user's postal code.
+ * @param string $province The user's province.
+ * 
+ * @return array Returns an array of objects containing key-value pairs that describe a polling station.
+ */
+function getPollingInfo($postalCode, $province){
     $url = 'https://elections.ca/Scripts/vis/voting?L=e&ED=35035&EV=51&EV_TYPE=1&PC={postalcode}&PROV={province}&PROVID=35&MAPID=&QID=3&PAGEID=31&TPAGEID=&PD=&STAT_CODE_ID=15';
     $url = str_replace('{postalcode}', $postalCode, $url);
     $url = str_replace('{province}', $province, $url);
@@ -20,12 +37,17 @@ if($_REQUEST['action'] == 'getPollingInfo'){
     $pollingInfo[] = array('name' => $pollingStation[1]);
     $pollingInfo[] = array('address' => $pollingStation[2]);
     $pollingInfo[] = array('city' => $pollingStation[3]);
-    $pollingInfo[] = array('candidates' => getCandidates($postalCode, $province));
-
-    //echo json_encode(getCandidates($postalCode, $province));
-    echo json_encode($pollingInfo);
+    return $pollingInfo;
 }
 
+/**
+ * Scrapes candidate info from elections.ca using a postal code and province as query parameters.
+ * 
+ * @param string $postalCode The user's postal code.
+ * @param string $province The user's province.
+ * 
+ * @return array Returns an array of arrays, with each sub-array containing key-value pairs that represent information for a single candidate.
+ */
 function getCandidates($postalCode, $province){
     $url = 'https://elections.ca/Scripts/vis/candidates?L=e&ED=35035&EV=51&EV_TYPE=1&PC={postalCode}&PROV={province}&PROVID=35&QID=-1&PAGEID=17';
     $url = str_replace('{postalcode}', $postalCode, $url);
