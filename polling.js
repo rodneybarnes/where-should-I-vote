@@ -3,6 +3,10 @@ $(document).ready(function() {
   const key = 'AkpqQWmpsJQMgLXtKOlvLRJa1VQKsvVtQJCbVDHwHfV1Vl05N4wviEjYoKZllQ8g'
 
   $('#searchBtn').click(getPostalCode)
+  $('form').submit(function(e){
+    e.preventDefault();
+    getPostalCode();
+  })
 
   function getPollingInfo(postalCode, province){
     console.log('Sending query...')

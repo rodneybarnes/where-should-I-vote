@@ -6,7 +6,7 @@ if($_REQUEST['action'] == 'getPollingInfo'){
     $postalCode = $_REQUEST['postalCode'];
     $province = $_REQUEST['province'];
     
-    $pollingInfo = getPollingInfo();
+    $pollingInfo = getPollingInfo($postalCode, $province);
     $pollingInfo[] = array('candidates' => getCandidates($postalCode, $province));
 
     echo json_encode($pollingInfo);
