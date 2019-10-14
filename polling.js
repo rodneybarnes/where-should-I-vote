@@ -26,6 +26,7 @@ $(document).ready(function() {
       $('#show-directions-btn').html('Hide Directions')
       areDirectionsVisible = true
     } else {
+      clearDirections()
       $('#directions-list').hide()
       $('#show-directions-btn').html('Show Directions')
       areDirectionsVisible = false
@@ -52,7 +53,6 @@ $(document).ready(function() {
     let url = 'https://dev.virtualearth.net/REST/v1/Locations?countryRegion=CA&addressLine={query}&key={key}'
 
     // If the user input was a postal code, we must pass that into the postalCode parameter and not the addressLine parameter
-    
     if(postalCodeRegex.test(query)){
       query = "&postalCode="+query
     }
@@ -92,6 +92,7 @@ $(document).ready(function() {
    * @param {string} url The Bing Maps REST API endpoint with query params set.
    */
   function doSearch(url){
+    resetMapVariables()
     // I had trouble accessing the Bing Maps Rest API from a server that used SSL; this blog post helped with that:
     // https://blogs.bing.com/maps/2015/03/05/accessing-the-bing-maps-rest-services-from-various-javascript-frameworks
     $.ajax({
@@ -199,6 +200,7 @@ $(document).ready(function() {
       zoom: 16
     })
     layer = new Microsoft.Maps.Layer()
+    clearDirections()
     createPushpinAtLocation(pollingStationLocation, 'Polling Station')
     map.layers.insert(layer)  
   }
@@ -212,13 +214,6 @@ $(document).ready(function() {
     layer.add(new Microsoft.Maps.Pushpin(location, {
       title: title
     }))
-  }
-
-  /**
-   * Clear the directions itinerary.
-   */
-  function clearDirections() {
-    if (directionsManager) directionsManager.clearAll()
   }
 
   /**
@@ -245,23 +240,47 @@ $(document).ready(function() {
         getDirections(latitude, longitude)
       })
     } else {
-      clearDirections() // Clear previous directions.
-      directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.walking })
-      let userLocationWaypoint = new Microsoft.Maps.Directions.Waypoint({
-        location: userLocation
-      })
-      directionsManager.addWaypoint(userLocationWaypoint)
-
-      let pollingStationlWaypoint = new Microsoft.Maps.Directions.Waypoint({
-        location: new Microsoft.Maps.Location(latitude, longitude)
-      })
-      directionsManager.addWaypoint(pollingStationlWaypoint)
-      directionsManager.setRenderOptions({
-        // Set the div where the itinerary will be displayed.
-        itineraryContainer: '#directions-list'
-      })
-      directionsManager.calculateDirections()
+      try {
+        clearDirections() // Clear any previous directions.
+        directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.walking })
+        let userLocationWaypoint = new Microsoft.Maps.Directions.Waypoint({
+          location: userLocation
+        })
+        directionsManager.addWaypoint(userLocationWaypoint)
+        let pollingStationlWaypoint = new Microsoft.Maps.Directions.Waypoint({
+          location: new Microsoft.Maps.Location(latitude, longitude)
+        })
+        directionsManager.addWaypoint(pollingStationlWaypoint)
+        directionsManager.setRenderOptions({
+          // Set the div where the itinerary will be displayed.
+          itineraryContainer: '#directions-list'
+        })
+        directionsManager.calculateDirections()
+      } catch (err){
+        console.log(err.message)
+      }
     }
+  }
+
+  /**
+   * Clear the directions itinerary.
+   */
+  function clearDirections() {
+    if (directionsManager) directionsManager.clearAll()
+  }
+
+  /**
+   * Sets all variables related to the map to null.
+   * I found I was having issues when multiple queries were being run in the same session,
+   * so this solution treats each query as a complete reset.
+   */
+  function resetMapVariables(){
+    map = null
+    layer = null
+    directionsManager = null
+    userLocation = null
+    pollingStationLatitude = null
+    pollingStationLongitude = null
   }
 
   /**
