@@ -38,9 +38,6 @@ function getPollingInfo($postalCode, $province){
     $pollingInfo->address = $pollingStation[2];
     $pollingInfo->city = $pollingStation[3];
 
-    $pollingInfo->error = 'Caught exception in getPollingInfo: ' + $e->getMessage();
-    
-    
     return $pollingInfo;
 }
 
