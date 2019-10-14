@@ -25,8 +25,8 @@ function getPollingInfo($postalCode, $province){
     $url = str_replace('{postalcode}', $postalCode, $url);
     $url = str_replace('{province}', $province, $url);
     $html = file_get_html($url);
-
     $pollingInfo = new stdClass();
+    
     $pollingInfo->coordinates = $html->find('input[id=coordinate1]', 0)->value;
     $pollingStation = array();
 
@@ -37,6 +37,10 @@ function getPollingInfo($postalCode, $province){
     $pollingInfo->name = $pollingStation[1];
     $pollingInfo->address = $pollingStation[2];
     $pollingInfo->city = $pollingStation[3];
+
+    $pollingInfo->error = 'Caught exception in getPollingInfo: ' + $e->getMessage();
+    
+    
     return $pollingInfo;
 }
 

@@ -1,6 +1,9 @@
 $(document).ready(function() {
 
   const key = 'AkpqQWmpsJQMgLXtKOlvLRJa1VQKsvVtQJCbVDHwHfV1Vl05N4wviEjYoKZllQ8g'
+  // Regex source: https://howtodoinjava.com/regex/canada-postal-code-validation/
+  const postalCodeRegex = new RegExp(/^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$/)
+
   let map,
     layer,
     userLocation,
@@ -49,8 +52,7 @@ $(document).ready(function() {
     let url = 'https://dev.virtualearth.net/REST/v1/Locations?countryRegion=CA&addressLine={query}&key={key}'
 
     // If the user input was a postal code, we must pass that into the postalCode parameter and not the addressLine parameter
-    // Regex source: https://howtodoinjava.com/regex/canada-postal-code-validation/
-    const postalCodeRegex = new RegExp(/^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$/)
+    
     if(postalCodeRegex.test(query)){
       query = "&postalCode="+query
     }
@@ -97,16 +99,27 @@ $(document).ready(function() {
       datatype: 'jsonp',
       jsonp: 'jsonp',
       success: function (r){
+        // console.log(r)
         toggleSearchInProgress(true)
+        if(r.resourceSets[0].resources[0].address.postalCode === undefined || r.resourceSets[0].resources[0].address.adminDistrict === undefined){
+          showErrorMessage('Sorry, no location data could be found relating to your query.')
+          return false
+        } 
         const postalCode = r.resourceSets[0].resources[0].address.postalCode.replace(/\s+/g,'')
+        // Because the server-side query is so slow, we must do everything we can to ensure its success.
+        // In this case, only send in valid Canadian postal codes.
+        if (!postalCodeRegex.test(postalCode)){
+          showErrorMessage('Sorry, we could not get valid location data from the query you entered.')
+          return false
+        }
         const province = r.resourceSets[0].resources[0].address.adminDistrict
         getPollingInfo(postalCode, province)
         const latitude = r.resourceSets[0].resources[0].point.coordinates[0]
         const longitude = r.resourceSets[0].resources[0].point.coordinates[1]
         userLocation = new Microsoft.Maps.Location(latitude, longitude)
       },
-      error: function (e) {
-        $('#search-feedback').html('Something went wrong: ' + e)
+      error: function (err) {
+        showErrorMessage('Something went wrong: ' + err.message)
       }
     })
   }
@@ -118,18 +131,17 @@ $(document).ready(function() {
    * @param {string} province The province.
    */
   function getPollingInfo(postalCode, province){
-    console.log('Sending query...')
     $.get(
       'polling.php',
       { action: 'getPollingInfo', postalCode: postalCode, province: province },
       function(data) {
         try {
-          const pollingInfo = jQuery.parseJSON(data)
+          const pollingInfo = jQuery.parseJSON(data)  // Will throw an exception if the data has non-formatted JSON.
           populatePollingInfo(pollingInfo)
           $('#search-feedback').html('')
         } catch (err){
-          $('#search-feedback').html(err.message)
-          // console.log(data)
+          showErrorMessage('Sorry, the query failed because the information returned could not be properly parsed.')
+          console.log(err.message)
         }
         $('.progress').hide();
         
@@ -250,8 +262,6 @@ $(document).ready(function() {
       })
       directionsManager.calculateDirections()
     }
-    
-    // $('#directions-list').show()
   }
 
   /**
@@ -260,7 +270,9 @@ $(document).ready(function() {
    */
   function toggleSearchInProgress(isInProgress){
     if(isInProgress){
-      $('#search-feedback').html('Searching...')
+      $('#polling-station-card').hide()
+      $('#candidates-card').hide()
+      $('#search-feedback').html('<p class="m-0"><small>Searching...</small></p>').removeClass('text-danger').addClass('text-success')
       $('.progress').show();  
     } else {
       $('#search-feedback').html('')
@@ -269,8 +281,19 @@ $(document).ready(function() {
   }
 
   /**
+   * Displays an error message to the page.
+   * @param {string} message The error message to display.
+   */
+  function showErrorMessage(message){
+    $('#search-feedback').html('<p class="m-0"><small>'+ message + '</small></p>').removeClass('text-success').addClass('text-danger')
+    $('.progress').hide();  
+  }
+
+  /**
    * The following block is to set the box shadow for the search bar when it is either in focus or hovered over, and
    * unset it when the focus is blurred or the mouse exits while the input is not in focus.
+   * 
+   * It's a little extra, but I guess so is this whole application.
    */
   let isInputFocused = false;
 
