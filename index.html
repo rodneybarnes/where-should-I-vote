@@ -12,49 +12,74 @@
         <link href="style.css" rel="stylesheet">
     </head>
     <body class="bg-white">
-        <div class="container-fluid bg-success m-0" style="height: 10px;"></div>
+        <div class="container-fluid bg-success m-0" style="height: 10px;">
+            
+        </div>
+        <div class="container-fluid progress m-0 p-0" style="display: none;">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                role="progressbar" 
+                aria-valuenow="100" 
+                aria-valuemin="0" 
+                aria-valuemax="100" 
+                style="width: 100%">
+            </div>
+        </div>
         <div class="container">
             <div class="mt-5 col">
                 <div class="row justify-content-center">
                     <h1 class="text-center font-weight-light">Where Should I Vote?</h1>
                 </div>
-                <div class="mt-3 form-group row justify-content-center">
-                    <div class="col-xs-10 col-sm-10 col-md-8 col-lg-6 pl-2" id="searchbar">
+                <div class="mt-3 mb-0 form-group row justify-content-center">
+                    <div class="col-10 col-md-8 col-lg-6 pl-2" id="searchbar">
                         <form class="m-0 p-2">
                             <div class="row pl-3">
                                 <i class="material-icons pr-2">search</i>
                                 <label for="searchbar" aria-label="Enter your address or postal code"></label>
-                                <input id="searchInput" type="text" placeholder="Enter your address or postal code">
+                                <div class="col-10 col-sm-11">
+                                    <input id="search-input" type="text" placeholder="Enter your address or postal code">
+                                </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+                <div class="row justify-content-center mb-3">
+                    <div class="col-10 col-md-8 col-lg-6" id="search-feedback">
                     </div>
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-4">
                         <div class="row justify-content-around">
-                            <button type="button" class="btn active" id="getCurrentLocationBtn">Use current location</button>
-                            <button type="button" class="btn active" id="searchBtn">Search</button>
+                            <button type="button" class="btn active" id="get-current-location-btn">Use current location</button>
+                            <button type="button" class="btn active" id="search-btn">Search</button>
                         </div>
                     </div>
                 </div>
-                <div id="polling-station-card" class="row justify-content-center mt-5">
+                <div id="polling-station-card" class="row justify-content-center mt-5" style="display: none;">
                     <div class="col-xs-6 col-sm-10">
                         <div class="card">
                             <div class="card-img-top" style="height: 250px;">
                                 <div id="ps-map"></div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title" id="ps-address">4 Solidarnosc Pl.</h5>
-                                <button type="button" class="btn btn-info">Show Directions</button>
+                                <h5 class="card-title" id="ps-name"></h5>
+                                <h6 id="ps-address"></h6>
+                                <p id="ps-hours"></p>
+                                <div id="directions-list" style="display: none; height: 100%;"></div>
+                                <button type="button" class="btn btn-info" id="show-directions-btn">Show Directions</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="candidates-card" class="row justify-content-center mt-5">
+                <div id="candidates-card" class="row justify-content-center mt-5" style="display: none;">
                     <div class="col-xs-6 col-sm-10">
                         <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title" id="ps-address">Candidates</h5>
+                            <div class="card-body" id="candidates-card-body">
+                                <h5 class="card-title mb-5" id="ps-address">Candidates</h5>
+                                <div class="row">
+                                    <div class="col">Name</div>
+                                    <div class="col">Party</div>
+                                    <div class="col">Website</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -67,6 +92,6 @@
         <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
         <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
         <script type='text/javascript' src="polling.js" async defer></script>
-        <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AkpqQWmpsJQMgLXtKOlvLRJa1VQKsvVtQJCbVDHwHfV1Vl05N4wviEjYoKZllQ8g&callback=loadMapScenario' async defer></script>
+        <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=AkpqQWmpsJQMgLXtKOlvLRJa1VQKsvVtQJCbVDHwHfV1Vl05N4wviEjYoKZllQ8g' async defer></script>
     </body>
 </html>

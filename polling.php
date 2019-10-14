@@ -7,7 +7,7 @@ if($_REQUEST['action'] == 'getPollingInfo'){
     $province = $_REQUEST['province'];
     
     $pollingInfo = getPollingInfo($postalCode, $province);
-    $pollingInfo[] = array('candidates' => getCandidates($postalCode, $province));
+    $pollingInfo->candidates = getCandidates($postalCode, $province);
 
     echo json_encode($pollingInfo);
 }
@@ -25,18 +25,18 @@ function getPollingInfo($postalCode, $province){
     $url = str_replace('{postalcode}', $postalCode, $url);
     $url = str_replace('{province}', $province, $url);
     $html = file_get_html($url);
-    $pollingInfo = array();
 
-    $pollingInfo[] = array('coordinates' => $html->find('input[id=coordinate1]', 0)->value);
+    $pollingInfo = new stdClass();
+    $pollingInfo->coordinates = $html->find('input[id=coordinate1]', 0)->value;
     $pollingStation = array();
 
     foreach($html->find('div[id=divOrdPoll] ul li') as $info){
         $pollingStation[] = $info->innertext;
     }
-    $pollingInfo[] = array('hours' => substr($pollingStation[0], 18, 22));
-    $pollingInfo[] = array('name' => $pollingStation[1]);
-    $pollingInfo[] = array('address' => $pollingStation[2]);
-    $pollingInfo[] = array('city' => $pollingStation[3]);
+    $pollingInfo->hours = substr($pollingStation[0], 18, 22);
+    $pollingInfo->name = $pollingStation[1];
+    $pollingInfo->address = $pollingStation[2];
+    $pollingInfo->city = $pollingStation[3];
     return $pollingInfo;
 }
 
@@ -53,23 +53,22 @@ function getCandidates($postalCode, $province){
     $url = str_replace('{postalcode}', $postalCode, $url);
     $url = str_replace('{province}', $province, $url);
     $html = file_get_html($url);
-    $candidateInfo = array();
     $candidates = array();
+    $candidateList = array();
 
     foreach($html->find('table tr') as $candidate){
-        $candidates[] = $candidate;
+        $candidateList[] = $candidate;
     }
-    array_shift($candidates);   // We don't need the table headers.
-    foreach($candidates as $candidate){
-        $candidateArray = array();
-        $candidateArray[] = array('name' => trim($candidate->find('td', 0)->innertext));
-        $candidateArray[] = array('party' => trim($candidate->find('td', 2)->innertext));
-        $candidateArray[] = array('phone' => trim($candidate->find('td', 3)->innertext));
-        if(isset($candidate->find('td a[href]', 0)->href))
-            $candidateArray[] = array('website' => trim($candidate->find('td a[href]', 0)->href));
-        $candidateInfo[] = $candidateArray;
+    array_shift($candidateList);   // We don't need the table headers.
+    foreach($candidateList as $candidate){
+        $candidateInfo = new stdClass();
+        $candidateInfo->name = trim($candidate->find('td', 0)->innertext);
+        $candidateInfo->party = trim($candidate->find('td', 2)->innertext);
+        $candidateInfo->phone = trim($candidate->find('td', 3)->innertext);
+        $candidateInfo->website = isset($candidate->find('td a[href]', 0)->href) ? trim($candidate->find('td a[href]', 0)->href) : '';
+        $candidates[] = $candidateInfo;
     }
-    return $candidateInfo;
+    return $candidates;
 }
 
 

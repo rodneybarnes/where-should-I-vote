@@ -18,12 +18,12 @@ input:focus {
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 }
 
-/* #searchbar:hover {
-    box-shadow: 0 0 3px rgba(0,0,0,0.16), 0 0 3px rgba(0,0,0,0.23);
-} */
-
 #searchbar input {
-    width: 85%;
-    height: 90%;
+    width: 100%;
+    height: 100%;
     border: none;
+}
+
+.directionsPanel {
+    width: 100% !important;
 }
