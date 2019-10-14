@@ -244,10 +244,12 @@ $(document).ready(function() {
         clearDirections() // Clear any previous directions.
         directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.walking })
         let userLocationWaypoint = new Microsoft.Maps.Directions.Waypoint({
+          address: 'Start',
           location: userLocation
         })
         directionsManager.addWaypoint(userLocationWaypoint)
         let pollingStationlWaypoint = new Microsoft.Maps.Directions.Waypoint({
+          address: 'Destination',
           location: new Microsoft.Maps.Location(latitude, longitude)
         })
         directionsManager.addWaypoint(pollingStationlWaypoint)
