@@ -94,6 +94,7 @@ $(document).ready(function() {
    */
   function doSearch(url){
     resetMapVariables()
+    $('.candidate-info').remove()
     // I had trouble accessing the Bing Maps Rest API from a server that used SSL; this blog post helped with that:
     // https://blogs.bing.com/maps/2015/03/05/accessing-the-bing-maps-rest-services-from-various-javascript-frameworks
     $.ajax({
@@ -179,7 +180,7 @@ $(document).ready(function() {
   function populateCandidates(candidates){
     if(candidates.length > 0){
       candidates.forEach(candidate => {
-        let newRow = '<div class="row"><div class="col-12"><hr /></div></div><div class="row mt-2 mb-2"><div class="col-4">{name}</div><div class="col-4 p-0">{party}</div><div class="col-4">{website}</div></div>'
+        let newRow = '<div class="row candidate-info"><div class="col-12"><hr /></div></div><div class="row mt-2 mb-2 candidate-info"><div class="col-4">{name}</div><div class="col-4 p-0">{party}</div><div class="col-4">{website}</div></div>'
         let website = '<a href="' + candidate.website + '" target="_blank">' + candidate.website + '</a>'
         newRow = newRow.replace('{name}', candidate.name)
           .replace('{party}', candidate.party)
