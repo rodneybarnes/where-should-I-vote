@@ -1,1 +1,5 @@
 runtime: php55
+
+handlers:
+- url: /
+  script: polling.php
