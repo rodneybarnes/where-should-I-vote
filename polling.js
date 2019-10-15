@@ -51,6 +51,7 @@ $(document).ready(function() {
    */
   function searchByQuery(query){
     let url = 'https://dev.virtualearth.net/REST/v1/Locations?countryRegion=CA&addressLine={query}&key={key}'
+    query = query.toUpperCase()
 
     // If the user input was a postal code, we must pass that into the postalCode parameter and not the addressLine parameter
     if(postalCodeRegex.test(query)){
@@ -137,6 +138,7 @@ $(document).ready(function() {
       { action: 'getPollingInfo', postalCode: postalCode, province: province },
       function(data) {
         try {
+          // console.log(data)
           const pollingInfo = jQuery.parseJSON(data)  // Will throw an exception if the data has non-formatted JSON.
           populatePollingInfo(pollingInfo)
           $('#search-feedback').html('')

@@ -5,11 +5,26 @@ if($_REQUEST['action'] == 'getPollingInfo'){
     // TODO: Validate and sanitize this input.
     $postalCode = $_REQUEST['postalCode'];
     $province = $_REQUEST['province'];
-    
-    $pollingInfo = getPollingInfo($postalCode, $province);
-    $pollingInfo->candidates = getCandidates($postalCode, $province);
+
+    $electoralDistrict = getElectoralDistrict($postalCode);
+    $pollingInfo = getPollingInfo($electoralDistrict, $postalCode, $province);
+    $pollingInfo->candidates = getCandidates($electoralDistrict, $postalCode, $province);
 
     echo json_encode($pollingInfo);
+}
+
+/**
+ * Queries elections.ca to get the electoral district related to the postal code.
+ * @param string $postalCode The user's postal code.
+ */
+function getElectoralDistrict($postalCode){
+    $url = 'https://www.elections.ca/results2.asp?mysent=finded&mylang=e&pc={postalcode}';
+    $url = str_replace('{postalcode}', $postalCode, $url);
+    $html = file_get_html($url);
+
+    $href = $html->find('a[class=current]', 0)->href;
+    $electoralDistrict = substr($href, 31, 5);
+    return $electoralDistrict;
 }
 
 /**
@@ -20,8 +35,9 @@ if($_REQUEST['action'] == 'getPollingInfo'){
  * 
  * @return array Returns an array of objects containing key-value pairs that describe a polling station.
  */
-function getPollingInfo($postalCode, $province){
-    $url = 'https://elections.ca/Scripts/vis/voting?L=e&ED=35035&EV=51&EV_TYPE=1&PC={postalcode}&PROV={province}&PROVID=35&MAPID=&QID=3&PAGEID=31&TPAGEID=&PD=&STAT_CODE_ID=15';
+function getPollingInfo($electoralDistrict, $postalCode, $province){
+    $url = 'https://elections.ca/Scripts/vis/voting?L=e&ED={electoraldistrict}&EV=51&EV_TYPE=1&PC={postalcode}&PROV={province}&PROVID=&MAPID=&QID=3&PAGEID=31&TPAGEID=&PD=&STAT_CODE_ID=15';
+    $url = str_replace('{electoraldistrict}', $electoralDistrict, $url);
     $url = str_replace('{postalcode}', $postalCode, $url);
     $url = str_replace('{province}', $province, $url);
     $html = file_get_html($url);
@@ -49,8 +65,9 @@ function getPollingInfo($postalCode, $province){
  * 
  * @return array Returns an array of arrays, with each sub-array containing key-value pairs that represent information for a single candidate.
  */
-function getCandidates($postalCode, $province){
-    $url = 'https://elections.ca/Scripts/vis/candidates?L=e&ED=35035&EV=51&EV_TYPE=1&PC={postalCode}&PROV={province}&PROVID=35&QID=-1&PAGEID=17';
+function getCandidates($electoralDistrict, $postalCode, $province){
+    $url = 'https://elections.ca/Scripts/vis/candidates?L=e&ED={electoraldistrict}&EV=51&EV_TYPE=1&PC={postalCode}&PROV={province}&PROVID=35&QID=-1&PAGEID=17';
+    $url = str_replace('{electoraldistrict}', $electoralDistrict, $url);
     $url = str_replace('{postalcode}', $postalCode, $url);
     $url = str_replace('{province}', $province, $url);
     $html = file_get_html($url);
