@@ -1,5 +1,13 @@
+# Configuration for Google Cloud Platform (GCP) deployment
+# See here for documentation: https://cloud.google.com/appengine/docs/standard/php/config/appref
 runtime: php55
 
 handlers:
 - url: /
   script: index.html
+- url: /(.+\.php)$
+  script: \1 
+- url: /(.+\.css)$
+  static_files: \1
+- url: /(.+\.js)$
+  static_files: \1
