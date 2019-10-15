@@ -15,3 +15,7 @@ handlers:
   static_files: \1
   upload: .+\.js$
   application_readable: true
+- url: /(.+\.ico)$
+  static_files: \1
+  upload: .+\.ico$
+  application_readable: true
