@@ -9,5 +9,9 @@ handlers:
   script: \1 
 - url: /(.+\.css)$
   static_files: \1
+  upload: .+\.css$
+  application_readable: true
 - url: /(.+\.js)$
   static_files: \1
+  upload: .+\.js$
+  application_readable: true
