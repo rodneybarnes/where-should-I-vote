@@ -82,7 +82,7 @@ $(document).ready(function() {
      * @param {string} err The error details
      */
     function locationError(err) {
-      $('#search-feedback').html('Error finding your location: ' + err.message)
+      showErrorMessage('Error finding your location: ' + err.message)
     }
     navigator.geolocation.getCurrentPosition(locationSuccess, locationError)
   }
@@ -103,7 +103,7 @@ $(document).ready(function() {
         // console.log(r)
         toggleSearchInProgress(true)
         if(r.resourceSets[0].resources[0].address.postalCode === undefined || r.resourceSets[0].resources[0].address.adminDistrict === undefined){
-          showErrorMessage('Sorry, no location data could be found relating to your query.')
+          showErrorMessage('Sorry, we could not find information related to this location.')
           return false
         } 
         const postalCode = r.resourceSets[0].resources[0].address.postalCode.replace(/\s+/g,'')
