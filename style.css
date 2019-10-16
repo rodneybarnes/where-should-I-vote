@@ -1,7 +1,23 @@
 @import "//fonts.googleapis.com/css?family=Roboto+Slab:300,400&display=swap";
 
+@media(max-width: 445px){
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    #input-container {
+        padding: 0;
+    }
+}
+
 h1 {
     font-family: 'Roboto Slab', serif;
+    color: #333;
+}
+
+h1 a {
+    color: #333;
+    text-decoration: none;
 }
 
 a{
