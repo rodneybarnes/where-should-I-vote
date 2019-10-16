@@ -11,14 +11,20 @@ $(document).ready(function() {
     pollingStationLatitude,
     pollingStationLongitude
   let areDirectionsVisible = false
+  let isSearchInProgress = false
 
   // Event listeners
-  $('#search-btn').click(startSearch)
+  $('#search-btn').click(function(){
+    if (!isSearchInProgress) startSearch()
+  })
   $('form').submit(function(e){
     e.preventDefault()
-    startSearch()
+    if (!isSearchInProgress)
+      startSearch()
   })
-  $('#get-current-location-btn').click(searchByUserLocation)
+  $('#get-current-location-btn').click(function(){
+    if (!isSearchInProgress) searchByUserLocation()
+  })
   $('#show-directions-btn').click(function(){
     if(!areDirectionsVisible){
       getDirections(pollingStationLatitude, pollingStationLongitude)
@@ -83,7 +89,11 @@ $(document).ready(function() {
      * @param {string} err The error details
      */
     function locationError(err) {
-      showErrorMessage('Error finding your location: ' + err.message)
+      if (err.code === 1){
+        showErrorMessage('This website does not have permission to access your location.')
+      } else {
+        showErrorMessage('Error finding your location: ' + err.message)
+      }
     }
     navigator.geolocation.getCurrentPosition(locationSuccess, locationError)
   }
@@ -141,14 +151,18 @@ $(document).ready(function() {
         try {
           // console.log(data)
           const pollingInfo = jQuery.parseJSON(data)  // Will throw an exception if the data has non-formatted JSON.
-          populatePollingInfo(pollingInfo)
-          $('#search-feedback').html('')
+          if (pollingInfo.coordinates == ""){
+            showErrorMessage('There was an issue getting the polling station information for your location; please visit <a href="https://elections.ca">elections.ca</a> for more details.')
+          } else {
+            populatePollingInfo(pollingInfo)
+            toggleSearchInProgress(false)
+          }
         } catch (err){
-          showErrorMessage('Sorry, the query failed because the information returned could not be properly parsed.')
+          showErrorMessage('There was an issue getting the polling station information for your location; please visit <a href="https://elections.ca">elections.ca</a> for more details.')
           console.log(err.message)
+          console.log(data) 
         }
         $('.progress').hide();
-        
       },
       'html'
     )
@@ -220,8 +234,7 @@ $(document).ready(function() {
   }
 
   /**
-   * Generates the direction itinerary from the user's location (or the default location)
-   * to the desired school.
+   * Generates the direction itinerary from the user's location to the polling station.
    * @param {Number} latitude The latitude coordinates of the destination.
    * @param {Number} longitude The longitude coordinates of the destination.
    */
@@ -293,6 +306,7 @@ $(document).ready(function() {
    * @param {boolean} isInProgress True if search is in progress.
    */
   function toggleSearchInProgress(isInProgress){
+    isSearchInProgress = isInProgress
     if(isInProgress){
       $('#polling-station-card').hide()
       $('#candidates-card').hide()
@@ -309,6 +323,7 @@ $(document).ready(function() {
    * @param {string} message The error message to display.
    */
   function showErrorMessage(message){
+    isSearchInProgress = false
     $('#search-feedback').html('<p class="m-0"><small>'+ message + '</small></p>').removeClass('text-success').addClass('text-danger')
     $('.progress').hide();  
   }

@@ -43,16 +43,20 @@ function getPollingInfo($electoralDistrict, $postalCode, $province){
     $html = file_get_html($url);
     $pollingInfo = new stdClass();
     
-    $pollingInfo->coordinates = $html->find('input[id=coordinate1]', 0)->value;
+    $pollingInfo->coordinates = $html->find('input[id=coordinate1]', 0) !== null ? $html->find('input[id=coordinate1]', 0)->value : "";
     $pollingStation = array();
 
     foreach($html->find('div[id=divOrdPoll] ul li') as $info){
-        $pollingStation[] = $info->innertext;
+        if ($info !== null){
+            $pollingStation[] = $info->innertext;
+        }
     }
-    $pollingInfo->hours = substr($pollingStation[0], 18, 22);
-    $pollingInfo->name = $pollingStation[1];
-    $pollingInfo->address = $pollingStation[2];
-    $pollingInfo->city = $pollingStation[3];
+    if (count($pollingStation) == 4){
+        $pollingInfo->hours = substr($pollingStation[0], 18, 22);
+        $pollingInfo->name = $pollingStation[1];
+        $pollingInfo->address = $pollingStation[2];
+        $pollingInfo->city = $pollingStation[3];
+    }
 
     return $pollingInfo;
 }
