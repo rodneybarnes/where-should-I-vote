@@ -2,7 +2,6 @@
 include 'simple_html_dom.php';
 
 if($_REQUEST['action'] == 'getPollingInfo'){
-    // TODO: Validate and sanitize this input.
     $postalCode = $_REQUEST['postalCode'];
     $province = $_REQUEST['province'];
 
